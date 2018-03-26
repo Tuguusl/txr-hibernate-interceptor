@@ -4,40 +4,33 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.util.Map;
 
 @Component
-public class CustomHibernateInterceptor extends EmptyInterceptor {
+public class CustomHibernateInterceptor extends EmptyInterceptor implements BeanFactoryAware {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    ListenersConfiguration listenersConfiguration;
 
-    private Map<Class, InterceptorListener> listeners;
+    private BeanFactory beanFactory;
 
-    @PostConstruct
-    public void initialize() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-
-        log.info("initializing interceptor");
-        listeners = listenersConfiguration.getAllListeners();
-        log.info("intercepting for "+ listeners.size()+ " listeners");
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
-    private InterceptorListener getListener(Object obj){
 
-        return listeners
-                .entrySet()
-                .stream()
-                .filter(entry->entry.getKey().isInstance(obj))
-                .map(Map.Entry::getValue)
-                .findAny()
-                .orElse(null);
+    private InterceptorListener getListener(Object entity){
+        HibernateListener notation = entity.getClass().getAnnotation(HibernateListener.class);
+        if(notation == null)
+            return null;
+        else
+            return  beanFactory.getBean(entity.getClass().getAnnotation(HibernateListener.class).value());
     }
 
     @Override
