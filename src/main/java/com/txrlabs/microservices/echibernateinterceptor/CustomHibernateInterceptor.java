@@ -1,5 +1,6 @@
 package com.txrlabs.microservices.echibernateinterceptor;
 
+import org.aspectj.apache.bcel.generic.RET;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
@@ -36,19 +37,15 @@ public class CustomHibernateInterceptor extends EmptyInterceptor implements Bean
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
 
-        boolean result =  super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
-
-        try {
+        if(super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types)) {
 
             InterceptorListener listener = getListener(entity);
             if (listener != null)
                 listener.onChange(previousState, currentState, propertyNames, types, entity);
-
-        }catch (Exception ex){
-            log.error("Failed notifying onChange listener");
+            return true;
         }
 
-        return result;
+        return false;
     }
 
     @Override
@@ -56,32 +53,22 @@ public class CustomHibernateInterceptor extends EmptyInterceptor implements Bean
 
         super.onDelete(entity, id, state, propertyNames, types);
 
-        try {
-
-            InterceptorListener listener = getListener(entity);
-            if (listener != null)
-                listener.onDelete(state, propertyNames, types, entity);
-
-        }catch (Exception ex){
-            log.error("Failed notifying onDelete listener");
-        }
+        InterceptorListener listener = getListener(entity);
+        if (listener != null)
+            listener.onDelete(state, propertyNames, types, entity);
     }
 
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
 
-        boolean result = super.onSave(entity, id, state, propertyNames, types);
-
-        try {
+        if(super.onSave(entity, id, state, propertyNames, types)) {
 
             InterceptorListener listener = getListener(entity);
             if (listener != null)
                 listener.onCreate(state, propertyNames, types, entity);
-
-        }catch (Exception ex){
-            log.error("Failed notifying onCreate listener");
+            return true;
         }
 
-        return result;
+        return false;
     }
 }
