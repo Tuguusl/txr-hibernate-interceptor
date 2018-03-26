@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -14,9 +15,13 @@ import java.util.Map;
 @Configuration
 public class HibernateConfiguration extends HibernateJpaAutoConfiguration {
 
-
     @Autowired
-    CustomHibernateInterceptor userInterceptor;
+    CustomHibernateInterceptor interceptor;
+
+    @Bean
+    CustomHibernateInterceptor getCustomHibernateInterceptor(){
+        return new CustomHibernateInterceptor();
+    }
 
     public HibernateConfiguration(DataSource dataSource, JpaProperties jpaProperties, ObjectProvider<JtaTransactionManager> jtaTransactionManager, ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
         super(dataSource, jpaProperties, jtaTransactionManager, transactionManagerCustomizers);
@@ -25,6 +30,6 @@ public class HibernateConfiguration extends HibernateJpaAutoConfiguration {
 
     @Override
     protected void customizeVendorProperties(Map<String, Object> vendorProperties) {
-        vendorProperties.put("hibernate.ejb.interceptor",userInterceptor);
+        vendorProperties.put("hibernate.ejb.interceptor",interceptor);
     }
 }
