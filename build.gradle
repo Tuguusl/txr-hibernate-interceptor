@@ -1,0 +1,96 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.6.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: "idea"
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = "com.txrlabs.microservices"
+def versionEnvPrefix = project.hasProperty("prod") ? "1.1." : "1.0."
+version versionEnvPrefix + (System.getenv("BUILD_NUMBER") ?: "0-SNAPSHOT")
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.11'
+}
+
+task createCiFile {
+	ext.versionfile = new File('.ci-env-properties').withWriter { out ->
+		out.println 'APP_VERSION=' + project.version
+		out.println 'ARTIFACT=' + project.name + '-' + project.version
+		out.println 'APP_GROUP=' + project.group
+		out.println 'APP_NAME=' + project.name
+		out.println 'APP_PACKAGING=jar'
+	}
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.SR4" //sleuth
+	}
+}
+
+apply plugin: 'maven-publish'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+}
+
+publishing {
+
+	repositories {
+		maven {
+			credentials {
+				username "$mavenUser"
+				password "$mavenPassword"
+			}
+
+			url System.getenv("BUILD_NUMBER") == null ?
+					"https://nexus.tguhost.com/content/repositories/snapshots/" :
+					"https://nexus.tguhost.com/content/repositories/releases/"
+		}
+	}
+
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+
+			artifact sourcesJar {
+				classifier "sources"
+			}
+		}
+	}
+}
