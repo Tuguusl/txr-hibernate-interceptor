@@ -43,6 +43,8 @@ public class CustomHibernateInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
 
+        boolean result =  super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+
         try {
 
             InterceptorListener listener = getListener(entity);
@@ -53,11 +55,13 @@ public class CustomHibernateInterceptor extends EmptyInterceptor {
             log.error("Failed notifying onChange listener");
         }
 
-        return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+        return result;
     }
 
     @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+
+        super.onDelete(entity, id, state, propertyNames, types);
 
         try {
 
@@ -68,11 +72,12 @@ public class CustomHibernateInterceptor extends EmptyInterceptor {
         }catch (Exception ex){
             log.error("Failed notifying onDelete listener");
         }
-        super.onDelete(entity, id, state, propertyNames, types);
     }
 
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+
+        boolean result = super.onSave(entity, id, state, propertyNames, types);
 
         try {
 
@@ -83,7 +88,7 @@ public class CustomHibernateInterceptor extends EmptyInterceptor {
         }catch (Exception ex){
             log.error("Failed notifying onCreate listener");
         }
-        return super.onSave(entity, id, state, propertyNames, types);
 
+        return result;
     }
 }
