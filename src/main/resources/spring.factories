@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.txrlabs.microservices.echibernateinterceptor.ListenersConfiguration
+com.txrlabs.microservices.echibernateinterceptor.ListenersConfiguration,\
+com.txrlabs.microservices.echibernateinterceptor.HibernateConfiguration

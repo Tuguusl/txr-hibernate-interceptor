@@ -23,7 +23,10 @@ public class CustomHibernateInterceptor extends EmptyInterceptor {
 
     @PostConstruct
     public void initialize() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+
+        log.info("initializing interceptor");
         listeners = listenersConfiguration.getAllListeners();
+        log.info("intercepting for "+ listeners.size()+ " listeners");
     }
 
     private InterceptorListener getListener(Object obj){
