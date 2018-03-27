@@ -7,8 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HibernateListener {
-
-    Class< ? extends InterceptorListener> value();
-
+public @interface WithListener {
+    Class< ? extends EcListener> value();
 }
