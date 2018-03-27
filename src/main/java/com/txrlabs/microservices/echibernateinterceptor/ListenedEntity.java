@@ -25,7 +25,7 @@ public class ListenedEntity implements Serializable{
             return _listener;
 
         WithListener notation = this.getClass().getAnnotation(WithListener.class);
-        if(notation == null)
+        if(notation == null || !ContextProvider.validContext())
             return null;
         else {
             _listener = ContextProvider.getBean(notation.value());
