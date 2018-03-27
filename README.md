@@ -2,7 +2,7 @@
 
 USAGE:
 
-[User.java]
+User.java
 ```java
 @Entity(name = "User")
 @Table(name = "User")
