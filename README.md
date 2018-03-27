@@ -1,0 +1,1 @@
+# ec-hibernate-interceptor
