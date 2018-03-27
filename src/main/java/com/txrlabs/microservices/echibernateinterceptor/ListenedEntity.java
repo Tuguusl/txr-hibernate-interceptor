@@ -15,11 +15,11 @@ public class ListenedEntity implements Serializable{
 
     @Transient
     @JsonIgnore
-    private EcListener _listener;
+    private HibernateListener _listener;
 
     @Transient
     @JsonIgnore
-    private EcListener getListener(){
+    private HibernateListener getListener(){
 
         if(_listener != null)
             return _listener;
@@ -40,14 +40,14 @@ public class ListenedEntity implements Serializable{
 
     @PostPersist
     public void onPostPersist(){
-        EcListener listener = getListener();
+        HibernateListener listener = getListener();
         if(listener != null)
             listener.onCreate(this);
     }
 
     @PostRemove
     public void onPostRemove(){
-        EcListener listener = getListener();
+        HibernateListener listener = getListener();
         if(listener != null)
             listener.onDelete(this);
 
@@ -55,7 +55,7 @@ public class ListenedEntity implements Serializable{
 
     @PostUpdate
     public void onPostUpdate(){
-        EcListener listener = getListener();
+        HibernateListener listener = getListener();
         if(listener != null)
             listener.onUpdate(this._previousStatus,this);
     }

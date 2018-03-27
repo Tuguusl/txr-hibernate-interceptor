@@ -1,6 +1,6 @@
 package com.txrlabs.microservices.echibernateinterceptor;
 
-public interface EcListener {
+public interface HibernateListener {
 
     void onCreate(ListenedEntity entity);
     void onDelete(ListenedEntity entity);
