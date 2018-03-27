@@ -1,8 +1,11 @@
+
 # ec-hibernate-interceptor
 
-USAGE:
+###  Implementation:
 
+```
 User.java
+```
 ```java
 @Entity(name = "User")
 @Table(name = "User")
@@ -12,3 +15,22 @@ public class User extends ListenedEntity {
   private string name;
 }
 ```
+
+```
+UserListener.java
+```
+```java
+@Component  
+public class UserListener implements HibernateListener {  
+    @Override  
+	public void onCreate(ListenedEntity entity) {  
+    }  
+    @Override  
+	public void onDelete(ListenedEntity entity) {  
+    }  
+    @Override  
+	public void onUpdate(ListenedEntity oldEntity, ListenedEntity newEntity) {  
+    }  
+}
+```
+
