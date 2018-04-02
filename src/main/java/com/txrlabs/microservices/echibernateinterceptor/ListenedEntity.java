@@ -9,45 +9,27 @@ import java.io.Serializable;
 @MappedSuperclass
 public class ListenedEntity implements Serializable{
 
-    @Transient
-    @JsonIgnore
-    private ListenedEntity _previousStatus;
 
     @Transient
     @JsonIgnore
-    private HibernateListener _listener;
+    public transient Embedded _embedded = new Embedded();
 
-    @Transient
-    @JsonIgnore
-    private HibernateListener getListener(){
-
-        if(_listener != null)
-            return _listener;
-
-        WithListener notation = this.getClass().getAnnotation(WithListener.class);
-        if(notation == null || !ContextProvider.validContext())
-            return null;
-        else {
-            _listener = ContextProvider.getBean(notation.value());
-            return _listener;
-        }
-    }
 
     @PostLoad
     public void onPostLoad() {
-        this._previousStatus = (ListenedEntity) SerializationUtils.clone(this);
+        _embedded.setPreviousStatus((ListenedEntity) SerializationUtils.clone(this));
     }
 
     @PostPersist
     public void onPostPersist(){
-        HibernateListener listener = getListener();
+        HibernateListener listener = _embedded.getListener(this.getClass());
         if(listener != null)
             listener.onCreate(this);
     }
 
     @PostRemove
     public void onPostRemove(){
-        HibernateListener listener = getListener();
+        HibernateListener listener = _embedded.getListener(this.getClass());
         if(listener != null)
             listener.onDelete(this);
 
@@ -55,9 +37,9 @@ public class ListenedEntity implements Serializable{
 
     @PostUpdate
     public void onPostUpdate(){
-        HibernateListener listener = getListener();
+        HibernateListener listener = _embedded.getListener(this.getClass());
         if(listener != null)
-            listener.onUpdate(this._previousStatus,this);
+            listener.onUpdate(_embedded.getPreviousStatus(),this, _embedded.getPreviousChange(this));
     }
 
 
