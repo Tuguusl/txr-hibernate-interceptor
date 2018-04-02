@@ -1,5 +1,9 @@
 
-# ec-hibernate-interceptor
+# txr-hibernate-interceptor
+
+
+###
+TODO: not working comparing lists (not ordered list are different values)
 
 ###  Implementation:
 
@@ -29,7 +33,7 @@ public class UserListener implements HibernateListener {
 	public void onDelete(ListenedEntity entity) {  
     }  
     @Override  
-	public void onUpdate(ListenedEntity oldEntity, ListenedEntity newEntity) {  
+	public void onUpdate(ListenedEntity oldEntity, ListenedEntity newEntity, List<String> changedProperties) {  
     }  
 }
 ```
