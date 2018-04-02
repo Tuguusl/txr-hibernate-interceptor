@@ -1,5 +1,5 @@
 APP_VERSION=1.0.0-SNAPSHOT
-ARTIFACT=ec-hibernate-interceptor-1.0.0-SNAPSHOT
+ARTIFACT=txr-hibernate-interceptor-1.0.0-SNAPSHOT
 APP_GROUP=com.txrlabs.microservices
-APP_NAME=ec-hibernate-interceptor
+APP_NAME=txr-hibernate-interceptor
 APP_PACKAGING=jar
